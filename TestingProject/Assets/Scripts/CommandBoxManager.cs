@@ -8,6 +8,8 @@ public class CommandBoxManager : MonoBehaviour
 {
     public TMP_InputField commandInput;
     public TextMeshProUGUI commandBoxText;
+    public Player playerScript;
+
 
     private List<string> commandHistory = new List<string>();
 
@@ -19,23 +21,36 @@ public class CommandBoxManager : MonoBehaviour
             ClearCommandInput();
             ScrollToBottom();
         }
+        
     }
 
     private void OnCommandEntered(string command)
     {
         if (!string.IsNullOrEmpty(command))
         {
-            ProcessCommand(command);
+            doCommand(command);
             UpdateCommandHistory();
         }
     }
 
-    private void ProcessCommand(string command)
+    public void doCommand(string command)
     {
-        // Process the command here, perform game actions accordingly
-        // This is just a placeholder example
-        Debug.Log("Command entered: " + command);
+        string[] commandWords = command.Split(' '); // Split the command into separate words
+
+        if (commandWords[0] == "move")
+        {
+            if (commandWords.Length > 1)
+            {
+                string targetGridSpace = commandWords[1]; // Get the additional input after "move"
+                playerScript.PlayerMove(targetGridSpace); // Pass the target grid space to the PlayerMove() function
+            }
+            else
+            {
+                Debug.Log("No target grid space provided."); // Handle case when no target grid space is provided
+            }
+        }
     }
+
 
     private void UpdateCommandHistory()
     {
