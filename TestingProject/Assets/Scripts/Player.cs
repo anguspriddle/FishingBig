@@ -13,7 +13,31 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        gridPositions.Add("a1", new Vector3(-309f, 10f, 317f));
+        float gridSize = 90f; // The distance between each grid square
+
+        char[] letters = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }; // Letters for the columns
+        int[] numbers = { 1, 2, 3, 4, 5, 6, 7, 8 }; // Numbers for the rows
+
+        for (int i = 0; i < letters.Length; i++)
+        {
+            for (int j = 0; j < numbers.Length; j++)
+            {
+                string key = letters[i] + numbers[j].ToString(); // Generate the key
+
+                float x = -308f + (i * gridSize); // Calculate x position based on column index
+                float z = 317f - (j * gridSize); // Calculate z position based on row index
+
+                Vector3 position = new Vector3(x, 10f, z); // Create the position vector
+
+                gridPositions.Add(key, position); // Add the key and position to the dictionary
+            }
+        }
+        // gridPositions.Add("a1", new Vector3(-308f, 10f, 317f));
+        // gridPositions.Add("a2", new Vector3(-218f, 10f, 317f));
+        // gridPositions.Add("a3", new Vector3(-128f, 10f, 317f));
+        // go on until a8
+        // gridPositions.Add("b1", new Vector3(-308f, 10f, 227f));
+        // continue grid positions
     }
 
     public void PlayerMove(string targetGridSpace)
@@ -26,7 +50,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            LogToCommandBox("Invalid target grid space" );
+            LogToCommandBox("Invalid target grid space");
         }
     }
 
@@ -44,7 +68,7 @@ public class Player : MonoBehaviour
 
     private void LogToCommandBox(string message)
     {
-        commandBoxText.text += "/n" + "  - " + message ;
+        commandBoxText.text += "/n" + "  - " + message;
     }
 
 }
