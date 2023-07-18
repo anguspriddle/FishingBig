@@ -1,19 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
-public class Player : MonoBehaviour
+public class Player1 : MonoBehaviour
 {
-    private Vector3 currentPosition = new Vector3(160f, 0f, 200f); // Set the starting position here
-    private Vector3 offset = Vector3.zero; // Offset from C3
-    private Dictionary<string, Vector3> gridPositions = new Dictionary<string, Vector3>();
+    Dictionary<string, Vector3> gridPositions = new Dictionary<string, Vector3>();
 
-    public TMP_Text commandBoxText; // Reference to the TextMeshProUGUI component
-
-    private void Start()
+    void Start()
     {
-        // Set up the grid square positions
+        // Setting up grid square distances
         gridPositions.Add("a1", new Vector3(40f, 0f, -40f));
         gridPositions.Add("a2", new Vector3(40f, 0f, -20f));
         gridPositions.Add("a3", new Vector3(40f, 0f, 0f));
@@ -45,35 +40,9 @@ public class Player : MonoBehaviour
         gridPositions.Add("e5", new Vector3(-40f, 0f, 40f));
     }
 
-    public void PlayerMove(string targetGridSquare)
+    // Update is called once per frame
+    void Update()
     {
-        if (IsValidGridSquare(targetGridSquare))
-        {
-            Vector3 targetPosition = gridPositions[targetGridSquare];
 
-            // Calculate the adjustment to the player's current position
-            Vector3 adjustment = targetPosition - currentPosition;
-
-            // Update the current position by adding the adjustment
-            currentPosition += adjustment;
-
-            // Move the player to the new position
-            transform.position = currentPosition;
-
-            LogToCommandBox("Adjusted to " + targetGridSquare);
-        }
-        else
-        {
-            LogToCommandBox("Invalid target grid square");
-        }
-    }
-    private bool IsValidGridSquare(string gridSquare)
-    {
-        return gridPositions.ContainsKey(gridSquare);
-    }
-
-    private void LogToCommandBox(string message)
-    {
-        commandBoxText.text += "\n" + "  - " + message;
     }
 }
