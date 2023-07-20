@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Player : MonoBehaviour
-{
-    private Vector3 currentPosition = new Vector3(160f, 0f, 200f); // Set the starting position here
+public class Player : MonoBehaviour {
+    private Vector3 currentPosition; // Will store the current position of the player
     private Vector3 offset = Vector3.zero; // Offset from C3
     private Dictionary<string, Vector3> gridPositions = new Dictionary<string, Vector3>();
 
     public TMP_Text commandBoxText; // Reference to the TextMeshProUGUI component
 
+
     private void Start()
     {
+        currentPosition = transform.position; // Set the starting position to the player's initial position
         // Set up the grid square positions
         gridPositions.Add("a1", new Vector3(40f, 0f, -40f));
         gridPositions.Add("a2", new Vector3(40f, 0f, -20f));
@@ -45,35 +46,30 @@ public class Player : MonoBehaviour
         gridPositions.Add("e5", new Vector3(-40f, 0f, 40f));
     }
 
-    public void PlayerMove(string targetGridSquare)
+
+    // Update the currentPosition every frame to keep it in sync with the player's position
+    private void Update()
     {
-        if (IsValidGridSquare(targetGridSquare))
+        currentPosition = transform.position;
+    }
+
+    // Call this function when you want to move the player to a specific grid space
+    public void PlayerMove(string targetGridSpace)
+    {
+        if (gridPositions.TryGetValue(targetGridSpace, out Vector3 targetPosition))
         {
-            Vector3 targetPosition = gridPositions[targetGridSquare];
-
-            // Calculate the adjustment to the player's current position
-            Vector3 adjustment = targetPosition - currentPosition;
-
-            // Update the current position by adding the adjustment
-            currentPosition += adjustment;
-
-            // Move the player to the new position
-            transform.position = currentPosition;
-
-            LogToCommandBox("Adjusted to " + targetGridSquare);
+            Vector3 newPosition = currentPosition + targetPosition - gridPositions["c3"] + offset;
+            MovePlayerToPosition(newPosition);
         }
         else
         {
-            LogToCommandBox("Invalid target grid square");
+            Debug.Log("Invalid target grid space provided.");
         }
     }
-    private bool IsValidGridSquare(string gridSquare)
-    {
-        return gridPositions.ContainsKey(gridSquare);
-    }
 
-    private void LogToCommandBox(string message)
+    private void MovePlayerToPosition(Vector3 newPosition)
     {
-        commandBoxText.text += "\n" + "  - " + message;
+        currentPosition = newPosition;
+        transform.position = currentPosition;
     }
 }
