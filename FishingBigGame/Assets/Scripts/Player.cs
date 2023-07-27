@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
     private Vector3 currentPosition; // Will store the current position of the player
     private Vector3 offset = Vector3.zero; // Offset from C3
     private Dictionary<string, Vector3> gridPositions = new Dictionary<string, Vector3>();
@@ -58,7 +59,7 @@ public class Player : MonoBehaviour {
     {
         if (gridPositions.TryGetValue(targetGridSpace, out Vector3 targetPosition))
         {
-            Vector3 newPosition = currentPosition + targetPosition - gridPositions["c3"] + offset;
+            Vector3 newPosition = currentPosition + targetPosition - gridPositions["c3"];
             MovePlayerToPosition(newPosition);
         }
         else
