@@ -5,20 +5,25 @@ using UnityEngine;
 public class inventoryManager : MonoBehaviour
 {
     public GameObject inventoryScreen;
+    private bool isInventoryOpen = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        inventoryScreen.gameObject.SetActive(false);
+        inventoryScreen.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
         // Check if the "i" key is pressed
-        if (Input.GetKeyDown(KeyCode.i))
+        if (Input.GetKeyDown(KeyCode.I))
         {
-            // Set the boolean variable of the targetGameObject to true
-            inventoryScreen.gameObject.SetActive(true);
+            // Toggle the boolean variable isInventoryOpen
+            isInventoryOpen = !isInventoryOpen;
+
+            // Set the inventory screen active state based on the boolean variable
+            inventoryScreen.SetActive(isInventoryOpen);
         }
     }
 }

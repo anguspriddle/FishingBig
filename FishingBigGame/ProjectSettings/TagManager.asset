@@ -3,7 +3,16 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Slot
+  - Slots
+  - Hotbar
+  - EquipmentSystem
+  - Panel
+  - ItemIcon
+  - Item
+  - CraftSystem
+  - ResultSlot
   layers:
   - Default
   - TransparentFX
@@ -14,7 +23,7 @@ TagManager:
   - GRID
   - minimap icon
   - plane
-  - 
+  - icons
   - 
   - 
   - 
@@ -40,4 +49,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: FIsh
+    uniqueID: 855911761
+    locked: 0
+  - name: Inventory
+    uniqueID: 3750645377
     locked: 0
