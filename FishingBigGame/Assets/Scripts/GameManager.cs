@@ -33,4 +33,13 @@ public class GameManager : MonoBehaviour
         // Update the text on the TMP Text
         coordinatesText.text = "X: " + xCoordinate.ToString("F2") + "   Z: " + zCoordinate.ToString("F2");
     }
+
+    public void ToggleGameObjectActive(GameObject inventoryBG)
+    {
+        if (inventoryBG != null)
+        {
+            inventoryBG.SetActive(!inventoryBG.activeSelf);
+        }
+    }
+
 }
