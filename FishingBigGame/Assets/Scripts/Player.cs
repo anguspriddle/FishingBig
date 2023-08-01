@@ -11,40 +11,50 @@ public class Player : MonoBehaviour
 
     public TMP_Text commandBoxText; // Reference to the TextMeshProUGUI component
 
+    // Define the grid size and offset variables
+    public int gridSize = 200;
+    public int gridOffset = 200;
 
     private void Start()
     {
         currentPosition = transform.position; // Set the starting position to the player's initial position
-        // Set up the grid square positions
-        gridPositions.Add("a1", new Vector3(40f, 0f, -40f));
-        gridPositions.Add("a2", new Vector3(40f, 0f, -20f));
-        gridPositions.Add("a3", new Vector3(40f, 0f, 0f));
-        gridPositions.Add("a4", new Vector3(40f, 0f, 20f));
-        gridPositions.Add("a5", new Vector3(40f, 0f, 40f));
 
-        gridPositions.Add("b1", new Vector3(20f, 0f, -40f));
-        gridPositions.Add("b2", new Vector3(20f, 0f, -20f));
-        gridPositions.Add("b3", new Vector3(20f, 0f, 0f));
-        gridPositions.Add("b4", new Vector3(20f, 0f, 20f));
-        gridPositions.Add("b5", new Vector3(20f, 0f, 40f));
+        // Calculate the player's rotation on the y-axis in degrees
+        float playerRotationY = transform.eulerAngles.y;
 
-        gridPositions.Add("c1", new Vector3(0f, 0f, -40f));
-        gridPositions.Add("c2", new Vector3(0f, 0f, -20f));
-        gridPositions.Add("c3", new Vector3(0f, 0f, 0f));
-        gridPositions.Add("c4", new Vector3(0f, 0f, 20f));
-        gridPositions.Add("c5", new Vector3(0f, 0f, 40f));
+        // Define the grid letters and numbers
+        char[] letters = { 'a', 'b', 'c', 'd', 'e' };
+        int[] numbers = { 1, 2, 3, 4, 5 };
 
-        gridPositions.Add("d1", new Vector3(-20f, 0f, -40f));
-        gridPositions.Add("d2", new Vector3(-20f, 0f, -20f));
-        gridPositions.Add("d3", new Vector3(-20f, 0f, 0f));
-        gridPositions.Add("d4", new Vector3(-20f, 0f, 20f));
-        gridPositions.Add("d5", new Vector3(-20f, 0f, 40f));
+        // Loop through all possible combinations of grid positions and calculate their world positions based on player's rotation
+        foreach (char letter in letters)
+        {
+            foreach (int number in numbers)
+            {
+                string gridSpace = letter.ToString() + number.ToString();
+                Vector3 worldPosition = CalculateWorldPosition(playerRotationY, letter, number);
+                gridPositions.Add(gridSpace, worldPosition);
+            }
+        }
+    }
 
-        gridPositions.Add("e1", new Vector3(-40f, 0f, -40f));
-        gridPositions.Add("e2", new Vector3(-40f, 0f, -20f));
-        gridPositions.Add("e3", new Vector3(-40f, 0f, 0f));
-        gridPositions.Add("e4", new Vector3(-40f, 0f, 20f));
-        gridPositions.Add("e5", new Vector3(-40f, 0f, 40f));
+    // Calculate the world position of a grid space based on player's rotation
+    private Vector3 CalculateWorldPosition(float rotationY, char letter, int number)
+    {
+        float angle = rotationY * Mathf.Deg2Rad;
+        float sinAngle = Mathf.Sin(angle);
+        float cosAngle = Mathf.Cos(angle);
+
+        float offsetX = (number - 3) * gridSize;
+        float offsetZ = (letter - 'c') * gridSize;
+
+        float newX = offsetX * cosAngle + offsetZ * sinAngle;
+        float newZ = offsetX * -sinAngle + offsetZ * cosAngle;
+
+        float worldX = currentPosition.x + newX + gridOffset;
+        float worldZ = currentPosition.z + newZ + gridOffset;
+
+        return new Vector3(worldX, 0f, worldZ);
     }
 
 

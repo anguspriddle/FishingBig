@@ -49,8 +49,26 @@ public class CommandBoxManager : MonoBehaviour
                 Debug.Log("No target grid space provided."); // Handle case when no target grid space is provided
             }
         }
+        else if (commandWords[0] == "rotate")
+        {
+            if (commandWords.Length > 1 && float.TryParse(commandWords[1], out float angle))
+            {
+                RotatePlayer(angle); // Pass the angle to the RotatePlayer() function
+            }
+            else
+            {
+                Debug.Log("Invalid rotation angle provided.");
+            }
+        }
     }
 
+
+    private void RotatePlayer(float angle)
+    {
+        Vector3 currentEulerAngles = playerScript.transform.eulerAngles;
+        playerScript.transform.eulerAngles = new Vector3(currentEulerAngles.x, angle, currentEulerAngles.z);
+        Debug.Log("Player rotated to angle: " + angle);
+    }
 
     private void UpdateCommandHistory()
     {
