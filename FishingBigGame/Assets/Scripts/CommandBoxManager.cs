@@ -9,6 +9,7 @@ public class CommandBoxManager : MonoBehaviour
     public TMP_InputField commandInput;
     public TextMeshProUGUI commandBoxText;
     public Player playerScript;
+    public fishingManager fishingManager;
 
 
     private List<string> commandHistory = new List<string>();
@@ -59,6 +60,10 @@ public class CommandBoxManager : MonoBehaviour
             {
                 Debug.Log("Invalid rotation angle provided.");
             }
+        }
+        else if (commandWords[0] == "fish")
+        {
+            fishingManager.StartFishing();
         }
     }
 

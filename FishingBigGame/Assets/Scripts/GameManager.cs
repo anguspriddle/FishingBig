@@ -42,4 +42,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ToggleCommandDetails(GameObject commandDetails)
+    {
+        if (commandDetails != null)
+        {
+            commandDetails.SetActive(!commandDetails.activeSelf);
+        }
+    }
+
 }
