@@ -38,18 +38,17 @@ public class Player : MonoBehaviour
         }
     }
 
-    // Calculate the world position of a grid space based on player's rotation
     private Vector3 CalculateWorldPosition(float rotationY, char letter, int number)
     {
         float angle = rotationY * Mathf.Deg2Rad;
         float sinAngle = Mathf.Sin(angle);
         float cosAngle = Mathf.Cos(angle);
 
-        float offsetX = (number - 3) * gridSize;
-        float offsetZ = (letter - 'c') * gridSize;
+        float offsetX = (letter - 'a') * gridSize; // Calculate offsetX based on the letter (column)
+        float offsetZ = (number - 1) * gridSize;   // Calculate offsetZ based on the number (row)
 
-        float newX = offsetX * cosAngle + offsetZ * sinAngle;
-        float newZ = offsetX * -sinAngle + offsetZ * cosAngle;
+        float newX = offsetX * cosAngle - offsetZ * sinAngle; // Swap sinAngle with -sinAngle
+        float newZ = offsetX * sinAngle + offsetZ * cosAngle; // Swap cosAngle with sinAngle
 
         float worldX = currentPosition.x + newX + gridOffset;
         float worldZ = currentPosition.z + newZ + gridOffset;
@@ -69,7 +68,16 @@ public class Player : MonoBehaviour
     {
         if (gridPositions.TryGetValue(targetGridSpace, out Vector3 targetPosition))
         {
-            Vector3 newPosition = currentPosition + targetPosition - gridPositions["c3"];
+            Vector3 newPosition = CalculateNewPosition(targetPosition, "c3");
+
+            // Check if the newPosition collides with any obstacles
+            Collider[] colliders = Physics.OverlapSphere(newPosition, 0.2f, LayerMask.GetMask("Obstacles"));
+            if (colliders.Length > 0)
+            {
+                Debug.Log("Cannot move to this position. It's obstructed.");
+                return; // Do not move if there's an obstacle in the way
+            }
+
             MovePlayerToPosition(newPosition);
         }
         else
@@ -78,6 +86,14 @@ public class Player : MonoBehaviour
         }
     }
 
+    private Vector3 CalculateNewPosition(Vector3 targetPosition, string referenceGridSpace)
+    {
+        Vector3 offsetToReferenceGridSpace = currentPosition - gridPositions[referenceGridSpace];
+        Quaternion playerRotation = Quaternion.Euler(0f, transform.eulerAngles.y, 0f);
+        Vector3 rotatedOffset = playerRotation * offsetToReferenceGridSpace;
+        Vector3 newPosition = targetPosition + rotatedOffset;
+        return newPosition;
+    }
     private void MovePlayerToPosition(Vector3 newPosition)
     {
         currentPosition = newPosition;

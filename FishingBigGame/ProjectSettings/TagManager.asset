@@ -13,6 +13,12 @@ TagManager:
   - Item
   - CraftSystem
   - ResultSlot
+  - Tooltip
+  - DraggingItem
+  - Canvas
+  - EventSystem
+  - MainInventory
+  - Timer
   layers:
   - Default
   - TransparentFX
@@ -24,7 +30,7 @@ TagManager:
   - minimap icon
   - plane
   - icons
-  - 
+  - Obstacles
   - 
   - 
   - 
