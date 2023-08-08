@@ -38,19 +38,7 @@ public class CommandBoxManager : MonoBehaviour
     {
         string[] commandWords = command.Split(' '); // Split the command into separate words
 
-        if (commandWords[0] == "move")
-        {
-            if (commandWords.Length > 1)
-            {
-                string targetGridSpace = commandWords[1]; // Get the additional input after "move"
-                playerScript.PlayerMove(targetGridSpace); // Pass the target grid space to the PlayerMove() function
-            }
-            else
-            {
-                Debug.Log("No target grid space provided."); // Handle case when no target grid space is provided
-            }
-        }
-        else if (commandWords[0] == "rotate")
+        if (commandWords[0] == "rotate")
         {
             if (commandWords.Length > 1 && float.TryParse(commandWords[1], out float angle))
             {
