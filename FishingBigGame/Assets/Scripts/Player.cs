@@ -13,6 +13,8 @@ public class Player : MonoBehaviour
 
     public float speed = 250f;
     public float rotationSpeed = 100f;
+    private bool canMove = true; // Player can move by default
+
 
     private void Start()
     {
@@ -24,17 +26,24 @@ public class Player : MonoBehaviour
     // Update the currentPosition every frame to keep it in sync with the player's position
     private void Update()
     {
-        currentPosition = transform.position;
-        // Boat movement and rotation
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        if (canMove)
+        {
+            currentPosition = transform.position;
+            // Boat movement and rotation
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
 
-        // Move forward and backward
-        transform.Translate(Vector3.left * verticalInput * speed * Time.deltaTime);
+            // Move forward and backward
+            transform.Translate(Vector3.left * verticalInput * speed * Time.deltaTime);
 
-        // Rotate left and right
-        transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
+            // Rotate left and right
+            transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
+        }
+
     }
 
-    
+    public void ToggleMovement(bool enableMovement)
+    {
+        canMove = enableMovement;
+    }
 }

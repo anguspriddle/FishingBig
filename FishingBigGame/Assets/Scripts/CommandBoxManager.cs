@@ -9,7 +9,7 @@ public class CommandBoxManager : MonoBehaviour
     public TMP_InputField commandInput;
     public TextMeshProUGUI commandBoxText;
     public Player playerScript;
-    public fishingManager fishingManager;
+    public FishingManager FishingManager;
 
 
     private List<string> commandHistory = new List<string>();
@@ -51,7 +51,7 @@ public class CommandBoxManager : MonoBehaviour
         }
         else if (commandWords[0] == "fish")
         {
-            fishingManager.StartFishing();
+            FishingManager.StartFishing();
         }
     }
 
