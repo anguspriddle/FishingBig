@@ -10,6 +10,8 @@ public class CommandBoxManager : MonoBehaviour
     public TextMeshProUGUI commandBoxText;
     public Player playerScript;
     public FishingManager FishingManager;
+    public ShopManager ShopManager;
+    public GameObject ShopScreen;
 
 
     private List<string> commandHistory = new List<string>();
@@ -37,21 +39,14 @@ public class CommandBoxManager : MonoBehaviour
     public void doCommand(string command)
     {
         string[] commandWords = command.Split(' '); // Split the command into separate words
-
-        if (commandWords[0] == "rotate")
-        {
-            if (commandWords.Length > 1 && float.TryParse(commandWords[1], out float angle))
-            {
-                RotatePlayer(angle); // Pass the angle to the RotatePlayer() function
-            }
-            else
-            {
-                Debug.Log("Invalid rotation angle provided.");
-            }
-        }
-        else if (commandWords[0] == "fish")
+        if (commandWords[0] == "fish")
         {
             FishingManager.StartFishing();
+        }
+        else if (commandWords[0] == "shop")
+        {
+            playerScript.canMove = false;
+            ShopScreen.SetActive(true);
         }
     }
 

@@ -17,7 +17,7 @@ public class inventoryManager : MonoBehaviour
     void Update()
     {
         // Check if the "i" key is pressed
-        if (Input.GetKeyDown(KeyCode.I))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             // Toggle the boolean variable isInventoryOpen
             isInventoryOpen = !isInventoryOpen;
