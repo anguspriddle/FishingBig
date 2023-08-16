@@ -27,6 +27,7 @@ public class FishingManager : MonoBehaviour
     private IEnumerator FishingProcess()
     {
         playerScript.ToggleMovement(false);
+        playerScript.Energy -= 20;
         fishingText.text = "Fishing..."; // Show "Fishing..." text.
 
         yield return new WaitForSeconds(2f);

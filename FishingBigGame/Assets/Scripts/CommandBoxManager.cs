@@ -43,11 +43,19 @@ public class CommandBoxManager : MonoBehaviour
         {
             FishingManager.StartFishing();
         }
-        else if (commandWords[0] == "shop")
+        else if (commandWords[0] == "shop" && playerScript.shopOpen == true)
         {
             playerScript.canMove = false;
             ShopScreen.SetActive(true);
         }
+        else if (commandWords[0] == "shop" && playerScript.shopOpen == false) {
+            commandBoxText.text = string.Join("\n", "Not in shop area!");
+        }
+        else if (commandWords[0] == "rest" && playerScript.restArea == true) {
+            playerScript.isResting = true;
+        }
+
+
     }
 
 
