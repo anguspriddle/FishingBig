@@ -21,6 +21,7 @@ TagManager:
   - Timer
   - Shop
   - RestingPoint
+  - Wall
   layers:
   - Default
   - TransparentFX

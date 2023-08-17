@@ -6,6 +6,7 @@ using TMPro;
 public class Player : MonoBehaviour
 {
     private Vector3 currentPosition;
+    private Vector3 movement;
     private Vector3 offset = Vector3.zero;
     private Dictionary<string, Vector3> gridPositions = new Dictionary<string, Vector3>();
     private Rigidbody rb;
@@ -80,15 +81,8 @@ public class Player : MonoBehaviour
                 }
             }
             currentPosition = transform.position;
-            // Rotation
-            float rotationInput = Input.GetAxis("Horizontal"); // A/D keys
-            Quaternion rotation = Quaternion.Euler(0, rotationInput * rotationSpeed * Time.deltaTime, 0);
-            rb.MoveRotation(rb.rotation * rotation);
-
-            // Forward and backward movement
-            float verticalInput = Input.GetAxis("Vertical"); // W/S keys
-            Vector3 moveDirection = transform.forward * verticalInput * speed * Time.deltaTime;
-            rb.MovePosition(rb.position + moveDirection);
+            movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * speed;
+            rb.velocity = movement;
         }
     }
 
@@ -110,6 +104,10 @@ public class Player : MonoBehaviour
         if (targetObj.gameObject.tag == "RestingPoint")
         {
             restArea = true;
+        }
+        if (targetObj.gameObject.tag == "Wall")
+        {
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
         }
     }
 
