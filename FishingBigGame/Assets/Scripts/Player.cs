@@ -52,39 +52,52 @@ public class Player : MonoBehaviour
     }
 
     private void Update()
+{
+    maxEnergyText.text = "Max Energy: " + MaxEnergy.ToString();
+    if (canMove)
     {
-        maxEnergyText.text = "Max Energy: " + MaxEnergy.ToString();
-        if (canMove)
+        // Calculate the distance moved since the last energy deduction
+        float distanceMoved = Vector3.Distance(lastEnergyDeductionPosition, transform.position);
+
+        // Calculate energy deduction and update display
+        if (distanceMoved >= 200)
         {
-            // Calculate the distance moved since the last energy deduction
-            float distanceMoved = Vector3.Distance(lastEnergyDeductionPosition, transform.position);
+            int energyDeduction = Mathf.FloorToInt(distanceMoved / 200) * energyLossPerDistance;
+            Energy -= energyDeduction;
+            lastEnergyDeductionPosition = transform.position;
 
-            // Calculate energy deduction and update display
-            if (distanceMoved >= 200)
+            UpdateEnergyDisplay(); // Update energy display after energy deduction
+        }
+        if (isResting)
+        {
+            restingTimer += Time.deltaTime;
+            if (restingTimer >= restingTime)
             {
-                int energyDeduction = Mathf.FloorToInt(distanceMoved / 200) * energyLossPerDistance;
-                Energy -= energyDeduction;
-                lastEnergyDeductionPosition = transform.position;
+                int energyToAdd = Mathf.FloorToInt(energyRegenRate * restingTime);
+                Energy = Mathf.Min(Energy + energyToAdd, MaxEnergy);
+                restingTimer = 0f;
 
-                UpdateEnergyDisplay(); // Update energy display after energy deduction
+                UpdateEnergyDisplay(); // Update energy display after energy regeneration
             }
-            if (isResting)
-            {
-                restingTimer += Time.deltaTime;
-                if (restingTimer >= restingTime)
-                {
-                    int energyToAdd = Mathf.FloorToInt(energyRegenRate * restingTime);
-                    Energy = Mathf.Min(Energy + energyToAdd, MaxEnergy);
-                    restingTimer = 0f;
+        }
+        
+        // Calculate movement based on player's rotation
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+        movement = (transform.forward * verticalInput + transform.right * horizontalInput) * speed;
+        rb.velocity = movement;
 
-                    UpdateEnergyDisplay(); // Update energy display after energy regeneration
-                }
-            }
-            currentPosition = transform.position;
-            movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * speed;
-            rb.velocity = movement;
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            RotatePlayer(rotationSpeed);
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            RotatePlayer(-rotationSpeed);
         }
     }
+}
+
 
     public void ToggleMovement(bool enableMovement)
     {
@@ -131,5 +144,10 @@ public class Player : MonoBehaviour
     private void UpdateEnergyDisplay()
     {
         energyText.text = "Energy: " + Energy.ToString();
+    }
+    void RotatePlayer(float angle)
+    {
+        // Rotate the player around the y-axis
+        transform.Rotate(0f, -angle * Time.deltaTime, 0f);
     }
 }
