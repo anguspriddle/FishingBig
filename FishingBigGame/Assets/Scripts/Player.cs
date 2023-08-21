@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public float rotationSpeed = 100f;
     public bool canMove = true;
     public TMP_Text shopAvailability;
+    public TMP_Text restAvailability;
     public bool shopOpen;
     public int Energy;
     public int coins = 0;
@@ -37,6 +38,7 @@ public class Player : MonoBehaviour
     private void Start()
     {
         shopAvailability.gameObject.SetActive(false);
+        restAvailability.gameObject.SetActive(false);
         shopOpen = false;
         Energy = 450;
         MaxEnergy = 450;
@@ -116,11 +118,18 @@ public class Player : MonoBehaviour
         }
         if (targetObj.gameObject.tag == "RestingPoint")
         {
+            restAvailability.gameObject.SetActive(true);
+            restAvailability.text = "Can Rest";
             restArea = true;
         }
         if (targetObj.gameObject.tag == "Wall")
         {
             GetComponent<Rigidbody>().velocity = Vector3.zero;
+        }
+        if (targetObj.gameObject.tag == "NPC")
+        {
+            GetComponent<Rigidbody>().velocity = Vector3.zero;
+            Energy -= 50;
         }
     }
 
@@ -135,6 +144,7 @@ public class Player : MonoBehaviour
         }
         if (targetObj.gameObject.tag == "RestingPoint")
         {
+            restAvailability.gameObject.SetActive(false);
             restArea = false;
             isResting = false;
 
