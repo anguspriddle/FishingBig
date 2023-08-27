@@ -8,16 +8,23 @@ public class FishingManager : MonoBehaviour
     [System.Serializable]
     public class Fish
     {
+        public string displayName;
         public string name;
         public float catchChance;
         public float fishWorth;
         public float caughtAmount;
+        public string biomeTag;
     }
 
     public Player playerScript;
     public List<Fish> availableFish;
-
     public TextMeshProUGUI fishingText;
+    public TextMeshProUGUI caughtFishText; // TextMeshProUGUI element to display caught fish info
+    public TextMeshProUGUI totalWorthText; // TextMeshProUGUI element to display total worth
+
+    private float totalWorth; // Total worth of caught fish
+
+    public string currentBiomeTag; // Store the current biome's tag
 
     public void StartFishing()
     {
@@ -28,25 +35,27 @@ public class FishingManager : MonoBehaviour
     {
         playerScript.ToggleMovement(false);
         playerScript.Energy -= 20;
-        fishingText.text = "Fishing..."; // Show "Fishing..." text.
+        fishingText.text = "Fishing...";
 
         yield return new WaitForSeconds(2f);
 
-        // Check if the fishing attempt is successful.
         if (Random.value <= 0.5f)
         {
             fishingText.color = Color.green;
-            fishingText.text = "Success!"; // Fishing attempt is successful.
+            fishingText.text = "Success!";
 
             yield return new WaitForSeconds(2f);
 
-            // Determine which fish has been caught.
             Fish caughtFish = DetermineCaughtFish();
 
             if (caughtFish != null)
             {
-                fishingText.text = "Caught 1x " + caughtFish.name + "!"; // Display the caught fish's name.
+                fishingText.text = "Caught 1x " + caughtFish.displayName + "!";
                 caughtFish.caughtAmount += 1;
+                totalWorth += caughtFish.fishWorth; // Update total worth
+
+                UpdateCaughtFishText();
+                UpdateTotalWorthText();
             }
             else
             {
@@ -56,36 +65,57 @@ public class FishingManager : MonoBehaviour
         else
         {
             fishingText.color = Color.red;
-            fishingText.text = "Failed!"; // Fishing attempt failed.
+            fishingText.text = "Failed!";
             yield return new WaitForSeconds(2f);
         }
 
         fishingText.color = Color.white;
-        fishingText.text = ""; // Reset the text after the fishing process is done.
+        fishingText.text = "";
         playerScript.ToggleMovement(true);
     }
 
     private Fish DetermineCaughtFish()
-{
-    // Determine the fish that has been caught based on their respective catch chances.
-
-    float totalCatchChance = 0f;
-    foreach (Fish fish in availableFish)
     {
-        totalCatchChance += fish.catchChance;
+        float totalCatchChance = 0f;
+        foreach (Fish fish in availableFish)
+        {
+            if (fish.biomeTag == currentBiomeTag)
+            {
+                totalCatchChance += fish.catchChance;
+            }
+        }
+
+        float randomValue = Random.value * totalCatchChance;
+        foreach (Fish fish in availableFish)
+        {
+            if (fish.biomeTag == currentBiomeTag)
+            {
+                randomValue -= fish.catchChance;
+
+                if (randomValue <= 0f)
+                {
+                    return fish;
+                }
+            }
+        }
+
+        return null;
     }
 
-    float randomValue = Random.value * totalCatchChance;
-    foreach (Fish fish in availableFish)
+    private void UpdateCaughtFishText()
     {
-        randomValue -= fish.catchChance;
-
-        if (randomValue <= 0f)
+        caughtFishText.text = "Caught Fish:\n";
+        foreach (Fish fish in availableFish)
         {
-            return fish;
+            if (fish.caughtAmount > 0)
+            {
+                caughtFishText.text += fish.displayName + ": " + fish.caughtAmount + "\n";
+            }
         }
     }
 
-    return null; // If no fish is caught, return null.
-}
+    private void UpdateTotalWorthText()
+    {
+        totalWorthText.text = "Total Worth: $" + totalWorth.ToString("F2");
+    }
 }

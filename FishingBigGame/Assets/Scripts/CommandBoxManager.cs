@@ -31,7 +31,8 @@ public class CommandBoxManager : MonoBehaviour
     {
         if (!string.IsNullOrEmpty(command))
         {
-            doCommand(command);
+            string lowercaseCommand = command.ToLower(); // Convert input to lowercase
+            doCommand(lowercaseCommand);
             UpdateCommandHistory();
         }
     }
@@ -49,10 +50,16 @@ public class CommandBoxManager : MonoBehaviour
             ShopScreen.SetActive(true);
         }
         else if (commandWords[0] == "shop" && playerScript.shopOpen == false) {
-            commandBoxText.text = string.Join("\n", "Not in shop area!");
+            commandHistory.Add("-" + ' ' + "Not in shop area!");
+            commandBoxText.text = string.Join("\n", commandHistory);
         }
-        else if (commandWords[0] == "rest" && playerScript.restArea == true) {
+        else if (commandWords[0] == "rest" && playerScript.restArea == true){
             playerScript.isResting = true;
+        }
+        else if (commandWords[0] == "rest" && playerScript.restArea == false)
+        {
+            commandHistory.Add("-" + ' ' + "Not in rest area!");
+            commandBoxText.text = string.Join("\n", commandHistory);
         }
 
 
@@ -81,7 +88,16 @@ public class CommandBoxManager : MonoBehaviour
     private void ScrollToBottom()
     {
         Canvas.ForceUpdateCanvases(); // Ensure the UI updates before scrolling
+
+        // Get the scroll rect component
         ScrollRect scrollRect = commandBoxText.GetComponentInParent<ScrollRect>();
-        scrollRect.normalizedPosition = new Vector2(0f, 0f);
+
+        // Set the vertical normalized position to fully scrolled down
+        scrollRect.verticalNormalizedPosition = 0f;
+    }
+    public void AddBiomeInfoToHistory(string biomeInfo)
+    {
+        commandHistory.Add("- " + biomeInfo);
+        commandBoxText.text = string.Join("\n", commandHistory);
     }
 }

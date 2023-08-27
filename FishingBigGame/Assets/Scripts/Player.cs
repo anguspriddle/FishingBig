@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class Player : MonoBehaviour
@@ -19,13 +20,18 @@ public class Player : MonoBehaviour
     public bool shopOpen;
     public int Energy;
     public int coins = 0;
-    public TMP_Text energyText; // Reference to the TextMeshProUGUI component for energy display
+    public TMP_Text energyText;
     public TMP_Text maxEnergyText;
+    public TMP_Text highScoreText;
+    public TMP_Text timerText;
+    public TMP_Text biomeText;
+    public FishingManager FishingManager;
+    public CommandBoxManager commandBoxManager;
+
 
     private int energyLossPerDistance = 5;
     private Vector3 startingPosition;
     private Vector3 lastEnergyDeductionPosition;
-    private bool initialEnergyDeductionDone = false;
     public bool restArea;
     public int MaxEnergy; // Maximum energy value
 
@@ -35,8 +41,16 @@ public class Player : MonoBehaviour
     public bool isResting = false; // Flag to track if the player is resting
     private float restingTimer = 0f; // Timer for energy regeneration
 
+    private float timer = 300f;
+
     private void Start()
     {
+
+        // Call the method with resetScore set to false
+        SaveScoreAndCheckHighScore(false);
+
+
+        // ensure the resting command and shop are unavailable on launch
         shopAvailability.gameObject.SetActive(false);
         restAvailability.gameObject.SetActive(false);
         shopOpen = false;
@@ -54,51 +68,66 @@ public class Player : MonoBehaviour
     }
 
     private void Update()
-{
-    maxEnergyText.text = "Max Energy: " + MaxEnergy.ToString();
-    if (canMove)
     {
-        // Calculate the distance moved since the last energy deduction
-        float distanceMoved = Vector3.Distance(lastEnergyDeductionPosition, transform.position);
-
-        // Calculate energy deduction and update display
-        if (distanceMoved >= 200)
+        // Timer logic
+        if (timer > 0f)
         {
-            int energyDeduction = Mathf.FloorToInt(distanceMoved / 200) * energyLossPerDistance;
-            Energy -= energyDeduction;
-            lastEnergyDeductionPosition = transform.position;
-
-            UpdateEnergyDisplay(); // Update energy display after energy deduction
-        }
-        if (isResting)
-        {
-            restingTimer += Time.deltaTime;
-            if (restingTimer >= restingTime)
+            timer -= Time.deltaTime;
+            timerText.text = timer.ToString("F1"); // Convert timer to a formatted string with 1 decimal place
+            if (timer <= 0f)
             {
-                int energyToAdd = Mathf.FloorToInt(energyRegenRate * restingTime);
-                Energy = Mathf.Min(Energy + energyToAdd, MaxEnergy);
-                restingTimer = 0f;
-
-                UpdateEnergyDisplay(); // Update energy display after energy regeneration
+                SaveScoreAndCheckHighScore(false); // Check high score before transitioning
+                SceneManager.LoadScene("EndGame"); // Load the EndGame scene
             }
         }
-        
-        // Calculate movement based on player's rotation
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
-        movement = (transform.forward * verticalInput + transform.right * horizontalInput) * speed;
-        rb.velocity = movement;
-
-        if (Input.GetKey(KeyCode.LeftArrow))
+        maxEnergyText.text = "Max Energy: " + MaxEnergy.ToString();
+        if (Energy == 0)
         {
-            RotatePlayer(rotationSpeed);
+            SceneManager.LoadScene("GameOverState");
         }
-        else if (Input.GetKey(KeyCode.RightArrow))
+        if (canMove)
         {
-            RotatePlayer(-rotationSpeed);
+            // Calculate the distance moved since the last energy deduction
+            float distanceMoved = Vector3.Distance(lastEnergyDeductionPosition, transform.position);
+
+            // Calculate energy deduction and update display
+            if (distanceMoved >= 200)
+            {
+                int energyDeduction = Mathf.FloorToInt(distanceMoved / 200) * energyLossPerDistance;
+                Energy -= energyDeduction;
+                lastEnergyDeductionPosition = transform.position;
+
+                UpdateEnergyDisplay(); // Update energy display after energy deduction
+            }
+            if (isResting)
+            {
+                restingTimer += Time.deltaTime;
+                if (restingTimer >= restingTime)
+                {
+                    int energyToAdd = Mathf.FloorToInt(energyRegenRate * restingTime);
+                    Energy = Mathf.Min(Energy + energyToAdd, MaxEnergy);
+                    restingTimer = 0f;
+
+                    UpdateEnergyDisplay(); // Update energy display after energy regeneration
+                }
+            }
+            
+            // Calculate movement based on player's rotation
+            float horizontalInput = Input.GetAxis("Horizontal");
+            float verticalInput = Input.GetAxis("Vertical");
+            movement = (transform.forward * verticalInput + transform.right * horizontalInput) * speed;
+            rb.velocity = movement;
+
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                RotatePlayer(rotationSpeed);
+            }
+            else if (Input.GetKey(KeyCode.RightArrow))
+            {
+                RotatePlayer(-rotationSpeed);
+            }
         }
     }
-}
 
 
     public void ToggleMovement(bool enableMovement)
@@ -150,6 +179,31 @@ public class Player : MonoBehaviour
 
         }
     }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("NormalBiome"))
+        {
+            Debug.Log("Entered the Normal Biome");
+            biomeText.text = "Biome: Normal";
+            FishingManager.currentBiomeTag = "NormalBiome";
+        }
+        if (other.gameObject.CompareTag("CoralReefBiome"))
+        {
+            biomeText.text = "Biome: Coral Reef";
+            FishingManager.currentBiomeTag = "CoralReefBiome";
+        }
+        if (other.gameObject.CompareTag("IceBiome"))
+        {
+            biomeText.text = "Biome: Ice";
+            FishingManager.currentBiomeTag = "IceBiome";
+        }
+        if (other.gameObject.CompareTag("SwampBiome"))
+        {
+            biomeText.text = "Biome: Swamp";
+            FishingManager.currentBiomeTag = "SwampBiome";
+        }
+    }
+
 
     private void UpdateEnergyDisplay()
     {
@@ -160,4 +214,32 @@ public class Player : MonoBehaviour
         // Rotate the player around the y-axis
         transform.Rotate(0f, -angle * Time.deltaTime, 0f);
     }
+
+    private void SaveScoreAndCheckHighScore(bool resetScore)
+    {
+        if (resetScore)
+        {
+            PlayerPrefs.SetInt("Score", 0); // Reset the score to 0
+        }
+
+        int currentScore = PlayerPrefs.GetInt("Score", 0); // Get the current score from PlayerPrefs
+        int playerCoins = coins; // Get the player's current coins
+
+        // Add the player's coins to the current score
+        currentScore += playerCoins;
+
+        // Save the updated score back to PlayerPrefs
+        PlayerPrefs.SetInt("Score", currentScore);
+        PlayerPrefs.Save(); // Save PlayerPrefs changes
+
+        // Check if the current score is higher than the high score
+        int highScore = PlayerPrefs.GetInt("HighScore", 0);
+        if (currentScore > highScore)
+        {
+            PlayerPrefs.SetInt("HighScore", currentScore);
+            PlayerPrefs.Save(); // Save PlayerPrefs changes
+        }
+    }
+
+
 }
