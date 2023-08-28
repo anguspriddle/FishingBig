@@ -23,6 +23,10 @@ TagManager:
   - RestingPoint
   - Wall
   - NPC
+  - IceBiome
+  - NormalBiome
+  - CoralReefBiome
+  - SwampBiome
   layers:
   - Default
   - TransparentFX
