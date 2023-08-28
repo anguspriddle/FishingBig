@@ -5,6 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuSceneManager : MonoBehaviour
 {
+    public GameObject instructionScreen;
+    private bool isInstructions = false;
     // This method will be called when the "Start Game" button is clicked.
     public void StartGame()
     {
@@ -24,5 +26,11 @@ public class MainMenuSceneManager : MonoBehaviour
     public void MainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    public void Instructions()
+    {   
+        isInstructions = !isInstructions;
+        instructionScreen.SetActive(isInstructions);
     }
 }

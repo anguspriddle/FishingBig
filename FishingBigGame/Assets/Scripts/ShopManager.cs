@@ -44,9 +44,9 @@ public class ShopManager : MonoBehaviour
 
     public void MaxEnergyUpgrade()
     {
-        if (playerScript.coins >= 300 && playerScript.MaxEnergy < 1000) 
+        if (playerScript.coins >= 100 && playerScript.MaxEnergy < 1000) 
         {
-            playerScript.coins -= 300;
+            playerScript.coins -= 100;
             playerScript.MaxEnergy += 100;
             playerScript.Energy = playerScript.MaxEnergy;
         } 
@@ -54,9 +54,9 @@ public class ShopManager : MonoBehaviour
 
     public void MaxSpeedUpgrade()
     {
-        if (playerScript.coins >= 500 && playerScript.speed < 600)
+        if (playerScript.coins >= 200 && playerScript.speed < 600)
         {
-            playerScript.coins -= 500;
+            playerScript.coins -= 200;
             playerScript.speed += 75;
             playerScript.rotationSpeed += 20;
         }
